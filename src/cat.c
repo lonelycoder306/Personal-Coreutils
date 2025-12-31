@@ -1,9 +1,21 @@
 /* Includes. */
 
 #include "../include/utils.h"
+#include "get_next_line.h"
+#include <fcntl.h>
+#include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+    #include <io.h>
+    #define WRITE _write
+#else
+    #include <unistd.h>
+    #define WRITE write
+#endif
 
 /* Defines. */
 
@@ -117,9 +129,34 @@ help_option()
     display_help(&info);
 }
 
+static void
+print_file(char* filename)
+{
+    int fd;
+    if (filename != NULL)
+    {
+        fd = open(filename, O_RDONLY);
+        if (fd == -1)
+            error(UTIL_NAME, EXIT_FAILURE,
+                "File (\"%s\") could not be opened.", filename);
+    }
+    else
+        fd = 0;
+
+    char* line;
+    while ((line = get_next_line(fd)) != NULL)
+        WRITE(1, line, strlen(line));
+}
+
 int
 main(int argc, char *argv[])
 {
+    if (argc == 1)
+    {
+        print_file(NULL);
+        exit(EXIT_SUCCESS);
+    }
+    
     int skip = 1;
     flag f = set_flags(argc, argv, &skip);
 
@@ -132,6 +169,14 @@ main(int argc, char *argv[])
     {
         display_version(UTIL_NAME);
         exit(EXIT_SUCCESS);
+    }
+
+    for (int i = 1; i < argc; i++)
+    {
+        if (!strcmp(argv[i], "-"))
+            print_file(NULL);
+        else
+            print_file(argv[i]);
     }
     
     return 0;
