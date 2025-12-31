@@ -28,6 +28,7 @@ error(const char* util_name, int exit_code, const char* msg, ...)
     fprintf(stderr, "%s: ", util_name);
     vfprintf(stderr, msg, ap);
     fprintf(stderr, "\n");
+    va_end(ap);
     exit(exit_code);
 }
 
