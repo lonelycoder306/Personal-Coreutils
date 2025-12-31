@@ -14,26 +14,29 @@ typedef uint8_t flag;
 /* 11 options for cat. */
 /* 8 unique options. */
 
+#define LETTER_OPTS 10 // -A, -b, -e, -E, -n, -s, -t, -T, -u, -v
+
 /* Option bits. */
 
-#define HELP_BIT        7
-#define VERSION_BIT     6
-#define NO_BLANK_BIT    5
-#define SHOW_ENDS_BIT   4
-#define NUM_LINES_BIT   3
-#define SQUEEZE_BIT     2
-#define TAB_BIT         1
-#define NONPRINT_BIT    0
+#define HELP_BIT        (1 << 7)
+#define VERSION_BIT     (1 << 6)
+#define NO_BLANK_BIT    (1 << 5)
+#define SHOW_ENDS_BIT   (1 << 4)
+#define NUM_LINES_BIT   (1 << 3)
+#define SQUEEZE_BIT     (1 << 2)
+#define TAB_BIT         (1 << 1)
+#define NONPRINT_BIT    (1 << 0)
 
 /* Option bit-masks. */
 
-#define HELP(f)         (((f) >> HELP_BIT) & 0x1)
-#define VERSION(f)      (((f) >> VERSION_BIT) & 0x1)
-#define NO_BLANK(f)     (((f) >> NO_BLANK_BIT) & 0x1)
-#define SHOW_ENDS(f)    (((f) >> SHOW_ENDS_BIT) & 0x1)
-#define NUM_LINES(f)    (((f) >> NUM_LINES_BIT) & 0x1)
-#define SQUEEZE(f)      (((f) >> SQUEEZE_BIT) & 0x1)
-#define NONPRINT(f)     (((f) >> NONPRINT_BIT) & 0x1)
+#define HELP(f)         ((f) & HELP_BIT)
+#define VERSION(f)      ((f) & VERSION_BIT)
+#define NO_BLANK(f)     ((f) & NO_BLANK_BIT)
+#define SHOW_ENDS(f)    ((f) & SHOW_ENDS)
+#define NUM_LINES(f)    ((f) & NUM_LINES_BIT)
+#define SQUEEZE(f)      ((f) & SQUEEZE_BIT)
+#define TAB(f)          ((f) & TAB_BIT)
+#define NONPRINT(f)     ((f) & NONPRINT_BIT)
 
 /* Help option data. */
 
@@ -69,7 +72,7 @@ cat_notes[] = {
 /* Helpers. */
 
 static flag
-set_flags(int argc, char* argv[])
+set_flags(int argc, char* argv[], int* skip)
 {
     flag f = DEF_FLAG;
 
@@ -92,6 +95,14 @@ set_flags(int argc, char* argv[])
         SET_BIT(f, TAB_BIT);
     else if (MATCH(argv[1], "-v", "--show-nonprinting"))
         SET_BIT(f, NONPRINT_BIT);
+    else
+    {
+        char opts[LETTER_OPTS] = {'A', 'b', 'e', 'E', 'n', 's',
+            't', 'T', 'u', 'v'};
+        int flags[LETTER_OPTS] = {0, NO_BLANK_BIT, 0, SHOW_ENDS_BIT,
+            NUM_LINES_BIT, SQUEEZE_BIT, 0, TAB_BIT, 0, NONPRINT_BIT};
+        f = set_bitflags(opts, argv, flags, LETTER_OPTS, skip);
+    }
 
     return f;
 }
@@ -113,11 +124,8 @@ help_option()
 int
 main(int argc, char *argv[])
 {
-    flag f = set_flags(argc, argv);
     int skip = 1;
-    if (f != DEF_FLAG)
-        skip = 2;
-    (void) skip;
+    flag f = set_flags(argc, argv, &skip);
 
     if (HELP(f))
     {
