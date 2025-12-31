@@ -11,11 +11,14 @@
 
 #define MATCH(str, short, long) \
     (!strcmp(str, short) || !strcmp(str, long))
-#define SET_BIT(f, bit) ((f) |= (1 << (bit)))
+#define SET_BIT(f, bit)     ((f) |= (bit))
+#define RESET_BIT(f, bit)   ((f) &= ~(bit))
 
 void    end(char* src, char* msg);
 char*   p_getcwd();
 void    display_version(const char* util_name);
 void    display_help(help_info* info);
+int     set_bitflags(char opts[], char* argv[], int flags[],
+    int count, int* skip);
 
 #endif
