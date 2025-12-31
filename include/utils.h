@@ -14,7 +14,11 @@
 #define SET_BIT(f, bit)     ((f) |= (bit))
 #define RESET_BIT(f, bit)   ((f) &= ~(bit))
 
+// Internal issues.
 void    end(char* src, char* msg);
+// Command misuse.
+void    error(const char* util_name, int exit_code,
+    const char* msg, ...);
 char*   p_getcwd();
 void    display_version(const char* util_name);
 void    display_help(help_info* info);

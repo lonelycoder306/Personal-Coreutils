@@ -1,4 +1,5 @@
 #include "../include/utils.h"
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -17,6 +18,17 @@ end(char* src, char* msg)
 {
     fprintf(stderr, "Error (%s): %s\n", src, msg);
     exit(EXIT_FAILURE);
+}
+
+void
+error(const char* util_name, int exit_code, const char* msg, ...)
+{
+    va_list ap;
+    va_start(ap, msg);
+    fprintf(stderr, "%s: ", util_name);
+    vfprintf(stderr, msg, ap);
+    fprintf(stderr, "\n");
+    exit(exit_code);
 }
 
 char*
