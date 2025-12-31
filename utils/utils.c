@@ -4,7 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+#if defined(_WIN32) || defined(_WIN64)
+    #include <direct.h>
+    #define GETCWD _getcwd
+#else
+    #include <unistd.h>
+    #define GETCWD getcwd
+#endif
 
 void
 end(char* src, char* msg)
@@ -20,7 +26,7 @@ p_getcwd()
     if (path == NULL)
         end("p_getcwd", "Allocation failure.");
 
-    if (getcwd(path, 1023) == NULL)
+    if (GETCWD(path, 1023) == NULL)
         end("p_getcwd", "Library failure.");
     
     return path;
