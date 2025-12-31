@@ -3,19 +3,12 @@
 #include "../include/utils.h"
 #include "get_next_line.h"
 #include <fcntl.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#if defined(_WIN32) || defined(_WIN64)
-    #include <io.h>
-    #define WRITE _write
-#else
-    #include <unistd.h>
-    #define WRITE write
-#endif
 
 /* Defines. */
 
@@ -44,7 +37,7 @@ typedef uint8_t flag;
 #define HELP(f)         ((f) & HELP_BIT)
 #define VERSION(f)      ((f) & VERSION_BIT)
 #define NO_BLANK(f)     ((f) & NO_BLANK_BIT)
-#define SHOW_ENDS(f)    ((f) & SHOW_ENDS)
+#define SHOW_ENDS(f)    ((f) & SHOW_ENDS_BIT)
 #define NUM_LINES(f)    ((f) & NUM_LINES_BIT)
 #define SQUEEZE(f)      ((f) & SQUEEZE_BIT)
 #define TAB(f)          ((f) & TAB_BIT)
@@ -129,23 +122,135 @@ help_option()
     display_help(&info);
 }
 
-static void
-print_file(char* filename)
+static inline char
+control_char(char c)
 {
-    int fd;
-    if (filename != NULL)
-    {
-        fd = open(filename, O_RDONLY);
-        if (fd == -1)
-            error(UTIL_NAME, EXIT_FAILURE,
-                "File (\"%s\") could not be opened.", filename);
-    }
-    else
-        fd = 0;
+    if ((c == '\n') || (c == '\t'))
+        return c;
+    return (c != 127 ? c + 0x40 : 0x3f);
+}
 
+#define IS_CTRL(c)  (((c) < 32) || ((c) == 127))
+#define IS_META(c)  ((c) > 127)
+#define AS_CTRL(c)  control_char(c)
+
+static char*
+format_str(char* line, flag f, size_t len)
+{
+    // We allocate more than enough space.
+    char* fmt = calloc((4 * len) + 1, sizeof(char));
+    if (fmt == NULL)
+        end(UTIL_NAME, "format_str", "Allocation failure.");
+
+    size_t i = 0;
+    for (size_t j = 0; j < len; j++)
+    {
+        char c = line[j];
+        if ((c > 31) && (c < 128))
+            fmt[i++] = line[j];
+        else if ((c == '\t') && TAB(f))
+        {
+            fmt[i++] = '^';
+            fmt[i++] = 'I';
+        }
+        else if (IS_CTRL(c))
+        {
+            if ((c != '\n') && (c != '\t'))
+                fmt[i++] = '^';
+            fmt[i++] = AS_CTRL(c);
+        }
+        else if (IS_META(c))
+        {
+            fmt[i++] = 'M';
+            fmt[i++] = '-';
+            if (IS_CTRL(c & 0x7f))
+            {
+                fmt[i++] = '^';
+                fmt[i++] = AS_CTRL(c & 0x7f);
+            }
+            else
+                fmt[i++] = c & 0x7f;
+        }
+    }
+
+    return fmt;
+}
+
+static int
+open_file(char* filename)
+{
+    int fd = open(filename, O_RDONLY);
+    if (fd == -1)
+        error(UTIL_NAME, -1,
+            "File (\"%s\") could not be opened.", filename);
+    
+    return fd;
+}
+
+static void
+print_file(int fd, flag f)
+{
     char* line;
-    while ((line = get_next_line(fd)) != NULL)
-        WRITE(1, line, strlen(line));
+    int count = 1;
+    bool prev_empty = false;
+    size_t len;
+    while ((line = get_next_line(fd, &len)) != NULL)
+    {
+        bool empty = ((len < 2) && (line[0] == '\n'));
+
+        // Formatting for -T and -v options.
+
+        if (TAB(f) || NONPRINT(f))
+        {
+            char* temp = line;
+            line = format_str(line, f, len);
+            free(temp);
+        }
+
+        // Checking for -s option.
+
+        if (empty)
+        {
+            if (prev_empty)
+                continue;
+            else
+                prev_empty = true;
+        }
+        else
+            prev_empty = false;
+
+        // Numbering for -b and -n options.
+
+        if (NO_BLANK(f))
+        {
+            if (empty)
+            {
+                printf("%6d  ", count);
+                count++;
+            }
+        }
+        else if (NUM_LINES(f))
+        {
+            printf("%6d  ", count);
+            count++;
+        }
+
+        // Formatting for -E option.
+
+        bool newline = (len == 0 ? false : line[len - 1] == '\n');
+        if (SHOW_ENDS(f))
+        {
+            if (newline)
+            {
+                printf("%.*s", (int) (len - 1), line);
+                printf("$\n");
+            }
+            else
+                printf("%s", line);
+        }
+        else
+            printf("%s", line);
+    }
 }
 
 int
@@ -153,7 +258,7 @@ main(int argc, char *argv[])
 {
     if (argc == 1)
     {
-        print_file(NULL);
+        print_file(0, DEF_FLAG);
         exit(EXIT_SUCCESS);
     }
     
@@ -171,13 +276,22 @@ main(int argc, char *argv[])
         exit(EXIT_SUCCESS);
     }
 
-    for (int i = 1; i < argc; i++)
+    int exit_code = 0;
+    for (int i = skip; i < argc; i++)
     {
         if (!strcmp(argv[i], "-"))
-            print_file(NULL);
+            print_file(0, f);
         else
-            print_file(argv[i]);
+        {
+            int fd = open_file(argv[i]);
+            if (fd == -1)
+            {
+                exit_code = 1;
+                continue;
+            }
+            print_file(fd, f);
+        }
     }
     
-    return 0;
+    return exit_code;
 }
