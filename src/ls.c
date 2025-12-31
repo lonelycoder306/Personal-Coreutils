@@ -36,7 +36,7 @@ main(int argc, char *argv[])
     struct dirent* entry;
     while ((entry = readdir(dir)) != NULL)
     {
-        if ((entry->d_name[0] == '\0')/* || (entry->d_name[0] == '.')*/)
+        if (entry->d_name[0] == '\0')
             continue;
         printf("%s  ", entry->d_name);
     }
