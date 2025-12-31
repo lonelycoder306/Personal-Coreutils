@@ -8,15 +8,16 @@
 
 #define VERSION_STR "0.0.1"
 
-typedef struct opt_pair {
+typedef struct opt_group {
     const char* option;
-    const char* effect;  
-} opt_pair;
+    const char* alt;
+    const char* effect;
+} opt_group;
 
 typedef struct help_info {
     const char*             usage;
     const char*             purpose;
-    const opt_pair* const   options;
+    const opt_group* const  options;
     const char* const*      option_details;
     const char* const*      notes;
 } help_info;
