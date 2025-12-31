@@ -1,0 +1,5 @@
+*.o
+*.a
+cat
+echo
+ls
