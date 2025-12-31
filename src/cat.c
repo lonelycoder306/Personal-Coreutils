@@ -62,9 +62,9 @@ set_flags(int argc, char* argv[])
     if (argc < 2)
         return f;
 
-    if (!strcmp(argv[1], "--help"))
+    if (!strcmp(argv[1], "--help") && (argc == 2))
         SET_BIT(f, HELP_BIT);
-    else if (!strcmp(argv[1], "--version"))
+    else if (!strcmp(argv[1], "--version") && (argc == 2))
         SET_BIT(f, VERSION_BIT);
     else if (MATCH(argv[1], "-b", "--number-nonblank"))
         SET_BIT(f, NO_BLANK_BIT);
@@ -105,23 +105,13 @@ int main(int argc, char *argv[])
 
     if (HELP(f))
     {
-        if (argc == 2)
-        {
-            help_option();
-            exit(EXIT_SUCCESS);
-        }
-        else
-            skip--;
+        help_option();
+        exit(EXIT_SUCCESS);
     }
     else if (VERSION(f))
     {
-        if (argc == 2)
-        {
-            display_version(UTIL_NAME);
-            exit(EXIT_SUCCESS);
-        }
-        else
-            skip--;
+        display_version(UTIL_NAME);
+        exit(EXIT_SUCCESS);
     }
     
     return 0;
