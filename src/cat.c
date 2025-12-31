@@ -37,9 +37,23 @@ typedef uint8_t flag;
 
 /* Help option data. */
 
-static const opt_pair
+static const opt_group
 cat_options[] = {
-    {NULL, NULL}
+    {"-A", "--show-all", ""},
+    {"-b", "--number-nonblank",
+        "Number all nonempty output lines. Overrides '-n'."},
+    {"-e", NULL, ""},
+    {"-E", "--show-ends", "Display '$' at the end of each line."},
+    {"-n", "--number", "Number all output lines."},
+    {"-s", "--squeeze-blank", "Suppress repeated empty output lines."},
+    {"-t", NULL, ""},
+    {"-T", "--show-tabs", "Display TAB (\\t) characters as ^I."},
+    {"-u", NULL, "(ignored)"},
+    {"-v", "--show-nonprinting", "Replace non-printable characters using ^ and "
+        "M- notation, except for LFD and TAB."},
+    {"--help", NULL, "Display this help page and exit."},
+    {"--version", NULL, "Output version information and exit."},
+    {NULL, NULL, NULL}
 };
 
 static const char*
@@ -96,12 +110,14 @@ help_option()
     display_help(&info);
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     flag f = set_flags(argc, argv);
     int skip = 1;
     if (f != DEF_FLAG)
         skip = 2;
+    (void) skip;
 
     if (HELP(f))
     {
