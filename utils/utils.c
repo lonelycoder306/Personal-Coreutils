@@ -51,12 +51,14 @@ display_help(help_info* info)
     for (int i = 0; options[i].option != NULL; i++)
     {
         if (options[i].alt == NULL)
-            printf("    %-16s%s\n", options[i].option,
+            printf("%4s%-12s%s\n", "", options[i].option,
                 options[i].effect);
         else
         {
-
+            printf("%4s%s, %s\n", "", options[i].option, options[i].alt);
+            printf("%16s%s\n", "", options[i].effect);
         }
+        printf("\n");
     }
 
     for (int i = 0; info->option_details[i] != NULL; i++)
