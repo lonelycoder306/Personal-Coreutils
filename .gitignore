@@ -4,3 +4,4 @@ cat
 echo
 ls
 tests/
+get_next_line/
