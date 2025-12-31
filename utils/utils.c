@@ -31,7 +31,8 @@ error(const char* util_name, int exit_code, const char* msg, ...)
     vfprintf(stderr, msg, ap);
     fprintf(stderr, "\n");
     va_end(ap);
-    exit(exit_code);
+    if (exit_code != -1)
+        exit(exit_code);
 }
 
 char*
