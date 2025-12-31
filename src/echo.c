@@ -13,12 +13,16 @@
 /* Defines. */
 
 #define UTIL_NAME "echo"
+
 typedef uint8_t flag;
 #define DEF_FLAG (flag) 0x0
 
-/* 5 options for echo. */
+#define OCT_LIMIT   3
+#define HEX_LIMIT   2
 
 #define LETTER_OPTS 3 // -n, -e, -E
+
+/* 5 options for echo. */
 
 /* Option bits. */
 
@@ -80,9 +84,12 @@ set_flags(int argc, char* argv[], int* skip)
     }
     else
     {
-        char opts[LETTER_OPTS] = {'n', 'e', 'E'};
-        int flags[LETTER_OPTS] = {NL_BIT, INTER_BIT, NO_INTER_BIT};
-        f = (flag) set_bitflags(opts, argv, flags, LETTER_OPTS, skip);
+        cl_opt opts[LETTER_OPTS]  = {
+            {'n', NULL, NL_BIT},
+            {'e', NULL, INTER_BIT},
+            {'E', NULL, NO_INTER_BIT}
+        };
+        f = (flag) set_bitflags(opts, argv, LETTER_OPTS, skip);
     }
 
     return f;
@@ -121,7 +128,7 @@ from_oct(const char* str, size_t* idx)
 {
     char c = 0;
     int i = 0;
-    while ((i < 3) && is_oct_char(str[i]))
+    while ((i < OCT_LIMIT) && is_oct_char(str[i]))
     {
         c = c * 8 + (str[i] - '0');
         (*idx)++;
@@ -136,7 +143,7 @@ from_hex(const char* str, size_t* idx)
 {
     char c = 0;
     int i = 0;
-    while ((i < 2) && is_hex_char(str[i]))
+    while ((i < HEX_LIMIT) && is_hex_char(str[i]))
     {
         if (isdigit(str[i]))
             c = c * 16 + (str[i] - '0');
@@ -194,7 +201,22 @@ format_str(const char* str)
                     printf("%s", fmt);
                     exit(EXIT_SUCCESS);
                 }
-                default:    break;
+                default:
+                {
+                    if (isdigit(str[j + 1]))
+                    {
+                        char temp = from_oct(&str[j + 1], &j);
+                        if (temp != '\0')
+                            fmt[i++] = temp;
+                        j -= 1; // To not skip two below.
+                    }
+                    else
+                    {
+                        fmt[i++] = '\\';
+                        j -= 1; // To not skip below.
+                    }
+                    break;
+                }
             }
             j += 2;
         }
