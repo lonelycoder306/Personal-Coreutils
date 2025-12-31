@@ -1,7 +1,9 @@
 #include "../include/utils.h"
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 void
@@ -37,13 +39,18 @@ display_help(help_info* info)
     printf("Usage:   %s\n", info->usage);
     printf("Purpose: %s\n\n", info->purpose);
 
-    const opt_pair* const options = info->options;
+    const opt_group* const options = info->options;
     if (options[0].option != NULL)
         printf("Options:\n");
     for (int i = 0; options[i].option != NULL; i++)
     {
-        printf("    %-16s%s\n", options[i].option,
-            options[i].effect);
+        if (options[i].alt == NULL)
+            printf("    %-16s%s\n", options[i].option,
+                options[i].effect);
+        else
+        {
+
+        }
     }
 
     for (int i = 0; info->option_details[i] != NULL; i++)
@@ -51,4 +58,44 @@ display_help(help_info* info)
 
     for (int i = 0; info->notes[i] != NULL; i++)
         printf("%s\n", info->notes[i]);
+}
+
+static int
+in_array(char c, char arr[], int count)
+{
+    for (int i = 0; i < count; i++)
+    {
+        if (arr[i] == c)
+            return i;
+    }
+
+    return -1;
+}
+
+int
+set_bitflags(char opts[], char* argv[], int flags[],
+    int count, int *skip)
+{
+    int flag = 0;
+
+    for (int i = 1; argv[i] != NULL; i++)
+    {
+        if (strncmp(argv[i], "-", 1) != 0)
+            break;
+        size_t len = strlen(argv[i]);
+        size_t j;
+        for (j = 1; j < len; j++)
+        {
+            int pos = in_array(argv[i][j], opts, count);
+            if (pos != -1)
+                SET_BIT(flag, flags[pos]);
+            else
+                break;
+        }
+        if (j != len)
+            break;
+        (*skip)++;
+    }
+
+    return flag;
 }
