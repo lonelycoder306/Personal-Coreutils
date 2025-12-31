@@ -69,11 +69,25 @@ display_help(help_info* info)
 }
 
 static int
-in_array(char c, char arr[], int count)
+in_str_array(char* str, cl_opt arr[], int count)
 {
     for (int i = 0; i < count; i++)
     {
-        if (arr[i] == c)
+        if (arr[i].alt == NULL)
+            continue;
+        if (!strcmp(arr[i].alt, str))
+            return i;
+    }
+
+    return -1;
+}
+
+static int
+in_char_array(char c, cl_opt arr[], int count)
+{
+    for (int i = 0; i < count; i++)
+    {
+        if (arr[i].main == c)
             return i;
     }
 
@@ -81,27 +95,44 @@ in_array(char c, char arr[], int count)
 }
 
 int
-set_bitflags(char opts[], char* argv[], int flags[],
-    int count, int *skip)
+set_bitflags(cl_opt opts[], char* argv[], int count, int *skip)
 {
     int flag = 0;
+
+    if (!strcmp(argv[1], "-"))
+        return flag;
 
     for (int i = 1; argv[i] != NULL; i++)
     {
         if (strncmp(argv[i], "-", 1) != 0)
             break;
+
+        int pos = in_str_array(argv[i], opts, count);
+        if (pos != -1)
+        {
+            SET_BIT(flag, opts[pos].flag);
+            continue;
+        }
+
+        int orig_flag = flag;
         size_t len = strlen(argv[i]);
         size_t j;
         for (j = 1; j < len; j++)
         {
-            int pos = in_array(argv[i][j], opts, count);
+            int pos = in_char_array(argv[i][j], opts, count);
             if (pos != -1)
-                SET_BIT(flag, flags[pos]);
+                SET_BIT(flag, opts[pos].flag);
             else
                 break;
         }
         if (j != len)
+        {
+            // The presence of any foreign letter in the option
+            // combination should undo any changes to the flag
+            // and terminate option parsing.
+            flag = orig_flag;
             break;
+        }
         (*skip)++;
     }
 

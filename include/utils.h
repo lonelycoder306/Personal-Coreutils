@@ -18,7 +18,6 @@ void    end(char* src, char* msg);
 char*   p_getcwd();
 void    display_version(const char* util_name);
 void    display_help(help_info* info);
-int     set_bitflags(char opts[], char* argv[], int flags[],
-    int count, int* skip);
+int     set_bitflags(cl_opt opts[], char* argv[], int count, int* skip);
 
 #endif

@@ -83,25 +83,21 @@ set_flags(int argc, char* argv[], int* skip)
         SET_BIT(f, HELP_BIT);
     else if (!strcmp(argv[1], "--version") && (argc == 2))
         SET_BIT(f, VERSION_BIT);
-    else if (MATCH(argv[1], "-b", "--number-nonblank"))
-        SET_BIT(f, NO_BLANK_BIT);
-    else if (MATCH(argv[1], "-E", "--show-ends"))
-        SET_BIT(f, SHOW_ENDS_BIT);
-    else if (MATCH(argv[1], "-n", "--number"))
-        SET_BIT(f, NUM_LINES_BIT);
-    else if (MATCH(argv[1], "-s", "--squeeze-blank"))
-        SET_BIT(f, SQUEEZE_BIT);
-    else if (MATCH(argv[1], "-T", "--show-tabs"))
-        SET_BIT(f, TAB_BIT);
-    else if (MATCH(argv[1], "-v", "--show-nonprinting"))
-        SET_BIT(f, NONPRINT_BIT);
     else
     {
-        char opts[LETTER_OPTS] = {'A', 'b', 'e', 'E', 'n', 's',
-            't', 'T', 'u', 'v'};
-        int flags[LETTER_OPTS] = {0, NO_BLANK_BIT, 0, SHOW_ENDS_BIT,
-            NUM_LINES_BIT, SQUEEZE_BIT, 0, TAB_BIT, 0, NONPRINT_BIT};
-        f = set_bitflags(opts, argv, flags, LETTER_OPTS, skip);
+        cl_opt opts[LETTER_OPTS] = {
+            {'A', "--show-all", NONPRINT_BIT | SHOW_ENDS_BIT | TAB_BIT},
+            {'b', "--number-nonblank", NO_BLANK_BIT},
+            {'e', NULL, NONPRINT_BIT | SHOW_ENDS_BIT},
+            {'E', "--show-ends", SHOW_ENDS_BIT},
+            {'n', "--number", NUM_LINES_BIT},
+            {'s', "--squeeze-blank", SQUEEZE_BIT},
+            {'t', NULL, NONPRINT_BIT | TAB_BIT},
+            {'T', "--show-tabs", TAB_BIT},
+            {'u', NULL, 0},
+            {'v', "--show-non-printing", NONPRINT_BIT}
+        };
+        f = set_bitflags(opts, argv, LETTER_OPTS, skip);
     }
 
     return f;

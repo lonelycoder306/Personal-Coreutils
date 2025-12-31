@@ -8,6 +8,12 @@
 
 #define VERSION_STR "0.0.1"
 
+typedef struct cl_opt {
+    char        main;
+    const char* alt;
+    int         flag;
+} cl_opt; // Command-line option struct.
+
 typedef struct opt_group {
     const char* option;
     const char* alt;
