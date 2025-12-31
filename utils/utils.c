@@ -14,8 +14,10 @@
 #endif
 
 void
-end(char* src, char* msg)
+end(char* util_name, char* src, char* msg)
 {
+    if (util_name != NULL)
+        fprintf(stderr, "%s - ", util_name);
     fprintf(stderr, "Error (%s): %s\n", src, msg);
     exit(EXIT_FAILURE);
 }
@@ -37,10 +39,10 @@ p_getcwd()
 {
     char* path = calloc(1024, sizeof(char));
     if (path == NULL)
-        end("p_getcwd", "Allocation failure.");
+        end(NULL, "p_getcwd", "Allocation failure.");
 
     if (GETCWD(path, 1023) == NULL)
-        end("p_getcwd", "Library failure.");
+        end(NULL, "p_getcwd", "Library failure.");
     
     return path;
 }

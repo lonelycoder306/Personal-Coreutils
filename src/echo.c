@@ -164,7 +164,7 @@ format_str(const char* str)
     size_t len = strlen(str);
     char* fmt = calloc(len + 1, sizeof(char));
     if (fmt == NULL)
-        end("format_str", "Allocation failure.");
+        end(UTIL_NAME, "format_str", "Allocation failure.");
 
     size_t i = 0;
     for (size_t j = 0; str[j] != '\0';)
