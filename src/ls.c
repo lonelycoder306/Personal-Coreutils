@@ -8,6 +8,7 @@
 
 /* 60 options for ls. */
 
+#define UTIL_NAME "ls"
 typedef uint8_t flag;
 #define DEF_FLAG (flag) 0
 
@@ -32,7 +33,7 @@ main(int argc, char *argv[])
 
     DIR* dir = opendir(path);
     if (dir == NULL)
-        end("opendir", "Failed to open directory.");
+        end(UTIL_NAME, "opendir", "Failed to open directory.");
     struct dirent* entry;
     while ((entry = readdir(dir)) != NULL)
     {
