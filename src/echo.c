@@ -2,6 +2,8 @@
 
 #include "../include/common.h"
 #include "../include/utils.h"
+#include <ctype.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -16,32 +18,35 @@ typedef uint8_t flag;
 
 /* 5 options for echo. */
 
+#define OPT_COUNT   5
+#define LETTER_OPTS 3 // -n, -e, -E
+
 /* Option bits. */
 
-#define HELP_BIT        7
-#define VERSION_BIT     6
-#define NL_BIT          5
-#define INTER_BIT       4
-#define NO_INTER_BIT    3
+#define HELP_BIT        (1 << 7)
+#define VERSION_BIT     (1 << 6)
+#define NL_BIT          (1 << 5)
+#define INTER_BIT       (1 << 4)
+#define NO_INTER_BIT    (1 << 3)
 
 /* Option bit-masks. */
 
-#define HELP(f)     (((f) >> HELP_BIT) & 0x1)
-#define VERSION(f)  (((f) >> VERSION_BIT) & 0x1)
-#define NO_NL(f)    (((f) >> NL_BIT) & 0x1)
-#define INTER(f)    (((f) >> INTER_BIT) & 0x1)
-#define NO_INTER(f) (((f) >> NO_INTER_BIT) & 0x1)
+#define HELP(f)     ((f) & HELP_BIT)
+#define VERSION(f)  ((f) & VERSION_BIT)
+#define NO_NL(f)    ((f) & NL_BIT)
+#define INTER(f)    ((f) & INTER_BIT)
+#define NO_INTER(f) ((f) & NO_INTER_BIT)
 
 /* Help option data. */
 
-static const opt_pair
+static const opt_group
 echo_options[] = {
-    {"-n", "Do not output the trailing newline."},
-    {"-e", "Enable interpretation of backslash escapes."},
-    {"-E", "Disable interpretation of backslash escape (default)."},
-    {"--help", "Display this help page and exit."},
-    {"--version", "Output version information and exit."},
-    {NULL, NULL}
+    {"-n", NULL, "Do not output the trailing newline."},
+    {"-e", NULL, "Enable interpretation of backslash escapes."},
+    {"-E", NULL, "Disable interpretation of backslash escape (default)."},
+    {"--help", NULL, "Display this help page and exit."},
+    {"--version", NULL, "Output version information and exit."},
+    {NULL, NULL, NULL}
 };
 
 static const char*
@@ -57,7 +62,7 @@ echo_notes[] = {
 /* Helpers. */
 
 static flag
-set_flags(int argc, char* argv[])
+set_flags(int argc, char* argv[], int* skip)
 {
     flag f = DEF_FLAG;
     
@@ -65,15 +70,21 @@ set_flags(int argc, char* argv[])
         return f;
 
     if (!strcmp(argv[1], "--help") && (argc == 2))
+    {
         SET_BIT(f, HELP_BIT);
+        (*skip)++; // Inconsequential but for consistency.
+    }
     else if (!strcmp(argv[1], "--version") && (argc == 2))
+    {
         SET_BIT(f, VERSION_BIT);
-    else if (!strcmp(argv[1], "-n"))
-        SET_BIT(f, NL_BIT);
-    else if (!strcmp(argv[1], "-e"))
-        SET_BIT(f, INTER_BIT);
-    else if (!strcmp(argv[1], "-E"))
-        SET_BIT(f, NO_INTER_BIT);
+        (*skip)++;
+    }
+    else
+    {
+        char opts[] = {'n', 'e', 'E'};
+        int flags[] = {NL_BIT, INTER_BIT, NO_INTER_BIT};
+        f = (flag) set_bitflags(opts, argv, flags, 3, skip);
+    }
 
     return f;
 }
@@ -92,14 +103,116 @@ help_option()
     display_help(&info);
 }
 
+static inline bool
+is_oct_char(char c)
+{
+    return (isdigit(c) && (c >= '0') && (c <= '7'));
+}
+
+static inline bool
+is_hex_char(char c)
+{
+    if (isdigit(c)) return true;
+    c = tolower(c);
+    return ((c >= 'a') && (c <= 'f'));
+}
+
+static char
+from_oct(const char* str, size_t* idx)
+{
+    char c = 0;
+    int i = 0;
+    while ((i < 3) && is_oct_char(str[i]))
+    {
+        c = c * 8 + (str[i] - '0');
+        (*idx)++;
+        i++;
+    }
+
+    return c;
+}
+
+static char
+from_hex(const char* str, size_t* idx)
+{
+    char c = 0;
+    int i = 0;
+    while ((i < 2) && is_hex_char(str[i]))
+    {
+        if (isdigit(str[i]))
+            c = c * 16 + (str[i] - '0');
+        else if (islower(str[i]))
+            c = c * 16 + (str[i] - 'a' + 10);
+        else
+            c = c * 16 + (str[i] - 'A' + 10);
+        (*idx)++;
+        i++;
+    }
+
+    return c;
+}
+
+static char*
+format_str(const char* str)
+{
+    size_t len = strlen(str);
+    char* fmt = calloc(len + 1, sizeof(char));
+    if (fmt == NULL)
+        end("format_str", "Allocation failure.");
+
+    size_t i = 0;
+    for (size_t j = 0; str[j] != '\0';)
+    {
+        if ((str[j] == '\\') && (j != len - 1))
+        {
+            switch (str[j + 1])
+            {
+                case '\\':  fmt[i++] = '\\';    break;
+                case 'a':   fmt[i++] = '\a';    break;
+                case 'b':   fmt[i++] = '\b';    break;
+                case 'e':   fmt[i++] = '\e';    break;
+                case 'f':   fmt[i++] = '\f';    break;
+                case 'n':   fmt[i++] = '\n';    break;
+                case 'r':   fmt[i++] = '\r';    break;
+                case 't':   fmt[i++] = '\t';    break;
+                case 'v':   fmt[i++] = '\v';    break;
+                case '0':
+                {
+                    char temp = from_oct(&str[j + 2], &j);
+                    if (temp != '\0')
+                        fmt[i++] = temp;
+                    break;
+                }
+                case 'x':
+                {
+                    char temp = from_hex(&str[j + 2], &j);
+                    if (temp != '\0')
+                        fmt[i++] = temp;
+                    break;
+                }
+                case 'c':
+                {
+                    printf("%s", fmt);
+                    exit(EXIT_SUCCESS);
+                }
+                default:    break;
+            }
+            j += 2;
+        }
+        else
+            fmt[i++] = str[j++];
+    }
+
+    return fmt;
+}
+
 /* Main. */
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    flag f = set_flags(argc, argv);
     int skip = 1;
-    if (f != DEF_FLAG)
-        skip = 2;
+    flag f = set_flags(argc, argv, &skip);
 
     if (HELP(f))
     {
@@ -115,7 +228,14 @@ int main(int argc, char *argv[])
     for (int i = skip; argv[i] != NULL; i++)
     {
         char* arg = argv[i];
-        printf("%s", arg);
+        if (INTER(f) && !NO_INTER(f))
+        {
+            char* temp = format_str(arg);
+            printf("%s", temp);
+            free(temp);
+        }
+        else
+            printf("%s", arg);
         if (argv[i + 1] != NULL) printf(" ");
     }
 
