@@ -18,7 +18,6 @@ typedef uint8_t flag;
 
 /* 5 options for echo. */
 
-#define OPT_COUNT   5
 #define LETTER_OPTS 3 // -n, -e, -E
 
 /* Option bits. */
@@ -81,9 +80,9 @@ set_flags(int argc, char* argv[], int* skip)
     }
     else
     {
-        char opts[] = {'n', 'e', 'E'};
-        int flags[] = {NL_BIT, INTER_BIT, NO_INTER_BIT};
-        f = (flag) set_bitflags(opts, argv, flags, 3, skip);
+        char opts[LETTER_OPTS] = {'n', 'e', 'E'};
+        int flags[LETTER_OPTS] = {NL_BIT, INTER_BIT, NO_INTER_BIT};
+        f = (flag) set_bitflags(opts, argv, flags, LETTER_OPTS, skip);
     }
 
     return f;
