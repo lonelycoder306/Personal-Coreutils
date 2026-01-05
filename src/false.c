@@ -13,6 +13,8 @@
 
 static const opt_group
 false_options[] = {
+    {"--help", NULL, "Display this help page and exit."},
+    {"--version", NULL, "Output version information and exit."},
     {NULL, NULL, NULL}
 };
 
