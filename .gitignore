@@ -2,6 +2,8 @@
 *.a
 cat
 echo
+false
 ls
+true
 tests/
 get_next_line/
