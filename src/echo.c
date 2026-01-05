@@ -73,15 +73,9 @@ set_flags(int argc, char* argv[], int* skip)
         return f;
 
     if (!strcmp(argv[1], "--help") && (argc == 2))
-    {
         SET_BIT(f, HELP_BIT);
-        (*skip)++; // Inconsequential but for consistency.
-    }
     else if (!strcmp(argv[1], "--version") && (argc == 2))
-    {
         SET_BIT(f, VERSION_BIT);
-        (*skip)++;
-    }
     else
     {
         cl_opt opts[LETTER_OPTS]  = {
