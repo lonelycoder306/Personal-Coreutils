@@ -224,7 +224,7 @@ format_str(const char* str)
 /* Main. */
 
 int
-main(int argc, char *argv[])
+main(int argc, char* argv[])
 {
     int skip = 1;
     flag f = set_flags(argc, argv, &skip);
