@@ -17,7 +17,7 @@
 		#error "BUFFER_SIZE must be greater than 0."
 	#elif BUFFER_SIZE > 8000
 		#error "BUFFER_SIZE too large."
-#endif
+	#endif
 
 typedef struct s_sbuf
 {
