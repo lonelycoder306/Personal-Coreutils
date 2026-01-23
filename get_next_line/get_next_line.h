@@ -28,8 +28,8 @@ typedef struct s_sbuf
 
 char	*get_next_line(int fd, size_t* length);
 
-# define FREE_CHARS		1
-# define NO_FREE_CHARS	0
+#define FREE_CHARS		1
+#define NO_FREE_CHARS	0
 
 // Buffer functions.
 
