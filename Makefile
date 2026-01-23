@@ -10,8 +10,8 @@ BINS = $(patsubst $(SRC_DIR)/%.c, %, $(SRCS))
 UTILS = $(wildcard $(UTILS_DIR)/*.c)
 UTIL_OBJS = $(patsubst $(UTILS_DIR)/%.c, %.o, $(UTILS))
 UTIL_LIB = utils
-READ_DIR=get_next_line
-READ_LIB=gnl
+READ_DIR = get_next_line
+READ_LIB = gnl
 
 INCLUDE = -I$(READ_DIR)
 LIBS = -L. -l$(UTIL_LIB) -L$(READ_DIR) -l$(READ_LIB)
