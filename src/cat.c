@@ -145,7 +145,7 @@ format_str(char* line, flag f, size_t len)
     size_t i = 0;
     for (size_t j = 0; j < len; j++)
     {
-        char c = line[j];
+        int c = line[j];
         if ((c > 31) && (c < 128))
             fmt[i++] = line[j];
         else if ((c == '\t') && TAB(f))
