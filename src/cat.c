@@ -81,8 +81,7 @@ set_flags(int argc, char* argv[], int* skip)
 {
     flag f = DEF_FLAG;
 
-    if (argc < 2)
-        return f;
+    if (argc < 2) return f;
 
     if (!strcmp(argv[1], "--help") && (argc == 2))
         SET_BIT(f, HELP_BIT);
