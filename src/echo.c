@@ -77,9 +77,9 @@ set_flags(int argc, char* argv[], int* skip)
     else
     {
         cl_opt opts[LETTER_OPTS]  = {
-            {'n', NULL, NL_BIT},
-            {'e', NULL, INTER_BIT},
-            {'E', NULL, NO_INTER_BIT}
+            {'n', NULL, NL_BIT, SET},
+            {'e', NULL, INTER_BIT, SET},
+            {'E', NULL, NO_INTER_BIT, SET}
         };
         f = (flag) set_bitflags(opts, argv, LETTER_OPTS, skip);
     }
