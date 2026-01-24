@@ -7,7 +7,6 @@
 #include <stdlib.h>
 
 #if defined(_WIN32) || defined(_WIN64)
-	#include <fileapi.h>
 	#include <windows.h>
 #endif
 
@@ -26,7 +25,7 @@ typedef u8 flag;
 #define HELP_BIT        (1 << 7)
 #define VERSION_BIT     (1 << 6)
 #define LOGICAL_BIT		(1 << 5)
-#define PHYSICAL_BIT	(0x0)
+#define PHYSICAL_BIT	LOGICAL_BIT
 
 /* Option bit-masks. */
 
@@ -73,8 +72,8 @@ set_flags(int argc, char* argv[], int* skip)
     else
     {
         cl_opt opts[LETTER_OPTS]  = {
-			{'L', "--logical", LOGICAL_BIT},
-			{'P', "--physical", PHYSICAL_BIT}
+			{'L', "--logical", LOGICAL_BIT, SET},
+			{'P', "--physical", PHYSICAL_BIT, RESET}
         };
         f = (flag) set_bitflags(opts, argv, LETTER_OPTS, skip);
     }
@@ -98,7 +97,7 @@ help_option()
 
 // Do NOT free return value.
 static char*
-get_current_dir()
+get_logical_dir()
 {
 	#if defined(_WIN32) || defined(_WIN64)
 		static char path[256];
@@ -112,26 +111,6 @@ get_current_dir()
 		if (path == NULL)
 			end(UTIL_NAME, "getenv", "Library failure.");
 		return path;
-	#endif
-}
-
-// Free return value.
-static char*
-resolve_path(char* path)
-{
-	#if defined(_WIN32) || defined(WIN64)
-		char* real = malloc(256 * sizeof(char));
-		if (real == NULL)
-			end(UTIL_NAME, "calloc", "Allocation failure.");
-		DWORD ret = GetFullPathName(path, 256, real, NULL);
-		if ((ret == 0) || (ret > 256))
-			end(UTIL_NAME, "GetFullPathName", "Library failure.");
-		return real;
-	#else
-		char* real = realpath(path, NULL);
-		if (real == NULL)
-			end(UTIL_NAME, "realpath", "Library failure.");
-		return real;
 	#endif
 }
 
@@ -153,14 +132,13 @@ main(int argc, char* argv[])
 		exit(EXIT_SUCCESS);
 	}
 
-	char* path = get_current_dir();
+	char* path = get_logical_dir();
 	if (LOGICAL(f))
 		printf("%s\n", path);
 	else
 	{
-		char* real = resolve_path(path);
+		char* real = p_getcwd();
 		printf("%s\n", real);
-		free(real);
 	}
 
 	return 0;
