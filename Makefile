@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g -Wall -Wextra -Werror
+CFLAGS = -g -O2 -Wall -Wextra -Werror
 AR = ar rcs
 
 SRC_DIR = src

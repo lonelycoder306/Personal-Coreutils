@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -O2 -Wall -Wextra -Werror
 #SIZE = -D BUFFER_SIZE=
 AR = ar rcs
 NAME = libgnl.a
