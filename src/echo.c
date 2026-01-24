@@ -5,7 +5,6 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,7 +13,7 @@
 
 #define UTIL_NAME "echo"
 
-typedef uint8_t flag;
+typedef u8 flag;
 #define DEF_FLAG (flag) 0x0
 
 #define OCT_LIMIT   3

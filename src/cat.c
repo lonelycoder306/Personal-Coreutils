@@ -5,7 +5,6 @@
 #include <fcntl.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,7 +12,7 @@
 /* Defines. */
 
 #define UTIL_NAME "cat"
-typedef uint8_t flag;
+typedef u8 flag;
 #define DEF_FLAG (flag) 0x0
 
 /* 11 options for cat. */
