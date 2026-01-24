@@ -4,7 +4,8 @@ cat
 echo
 false
 ls
-true
-yes
 pwd
+true
+whoami
+yes
 tests/
