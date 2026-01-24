@@ -6,4 +6,5 @@ false
 ls
 true
 yes
+pwd
 tests/
