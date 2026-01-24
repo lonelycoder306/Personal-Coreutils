@@ -25,8 +25,7 @@ $(UTIL_LIB): $(UTIL_OBJS)
 	@$(AR) lib$(UTIL_LIB).a $^
 
 $(READ_LIB):
-	@make -C $(READ_DIR) all --no-print-directory
-	@make -C $(READ_DIR) clean --no-print-directory
+	@make -C $(READ_DIR) all clean --no-print-directory
 
 %.o: $(UTILS_DIR)/%.c
 	@$(CC) $(CFLAGS) -c $< -o $@
