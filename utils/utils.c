@@ -127,7 +127,7 @@ set_bitflags(cl_opt opts[], char* argv[], int count, int *skip)
         if (pos != -1)
         {
             SET_BIT(flag, opts[pos].flag);
-            (*skip)++;
+            if (skip != NULL) (*skip)++;
             continue;
         }
 
@@ -150,7 +150,7 @@ set_bitflags(cl_opt opts[], char* argv[], int count, int *skip)
             flag = orig_flag;
             break;
         }
-        (*skip)++;
+        if (skip != NULL) (*skip)++;
     }
 
     return flag;
