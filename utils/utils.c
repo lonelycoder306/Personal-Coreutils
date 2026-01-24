@@ -129,7 +129,8 @@ set_bitflags(cl_opt opts[], char* argv[], int count, int *skip)
         int pos = in_str_array(argv[i], opts, count);
         if (pos != -1)
         {
-            SET_BIT(flag, opts[pos].flag);
+            opts[pos].set ? SET_BIT(flag, opts[pos].flag)
+                : RESET_BIT(flag, opts[pos].flag);
             if (skip != NULL) (*skip)++;
             continue;
         }
@@ -141,7 +142,10 @@ set_bitflags(cl_opt opts[], char* argv[], int count, int *skip)
         {
             int pos = in_char_array(argv[i][j], opts, count);
             if (pos != -1)
-                SET_BIT(flag, opts[pos].flag);
+            {
+                opts[pos].set ? SET_BIT(flag, opts[pos].flag)
+                    : RESET_BIT(flag, opts[pos].flag);
+            }
             else
                 break;
         }

@@ -9,6 +9,10 @@
 #define VERSION_STR "0.0.1"
 
 #include <stdint.h>
+#include <stdbool.h>
+
+#define SET     true
+#define RESET   false
 
 typedef int8_t      i8;
 typedef int16_t     i16;
@@ -24,6 +28,7 @@ typedef struct cl_opt {
     char        main;
     const char* alt;
     u64         flag;
+    bool        set;
 } cl_opt; // Command-line option struct.
 
 typedef struct opt_group {
