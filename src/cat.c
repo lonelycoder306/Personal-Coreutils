@@ -1,5 +1,6 @@
 /* Includes. */
 
+#include "../include/common.h"
 #include "../include/utils.h"
 #include "get_next_line.h"
 #include <fcntl.h>
