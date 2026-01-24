@@ -110,10 +110,10 @@ in_char_array(char c, cl_opt arr[], int count)
     return -1;
 }
 
-int
+u64
 set_bitflags(cl_opt opts[], char* argv[], int count, int *skip)
 {
-    int flag = 0;
+    u64 flag = 0;
 
     if (!strcmp(argv[1], "-"))
         return flag;
@@ -130,7 +130,7 @@ set_bitflags(cl_opt opts[], char* argv[], int count, int *skip)
             continue;
         }
 
-        int orig_flag = flag;
+        u64 orig_flag = flag;
         size_t len = strlen(argv[i]);
         size_t j;
         for (j = 1; j < len; j++)

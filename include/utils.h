@@ -22,6 +22,6 @@ void    error(const char* util_name, int exit_code,
 char*   p_getcwd();
 void    display_version(const char* util_name);
 void    display_help(help_info* info);
-int     set_bitflags(cl_opt opts[], char* argv[], int count, int* skip);
+u64     set_bitflags(cl_opt opts[], char* argv[], int count, int* skip);
 
 #endif

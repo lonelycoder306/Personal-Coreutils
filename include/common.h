@@ -23,7 +23,7 @@ typedef uint64_t    u64;
 typedef struct cl_opt {
     char        main;
     const char* alt;
-    int         flag;
+    u64         flag;
 } cl_opt; // Command-line option struct.
 
 typedef struct opt_group {
