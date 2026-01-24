@@ -15,7 +15,8 @@
 #define RESET_BIT(f, bit)   ((f) &= ~(bit))
 
 // Internal issues.
-void    end(char* util_name, char* src, char* msg);
+void    end(const char* util_name, const char* src,
+    const char* msg);
 // Command misuse.
 void    error(const char* util_name, int exit_code,
     const char* msg, ...);

@@ -14,7 +14,7 @@
 #endif
 
 void
-end(char* util_name, char* src, char* msg)
+end(const char* util_name, const char* src, const char* msg)
 {
     if (util_name != NULL)
         fprintf(stderr, "%s - ", util_name);
