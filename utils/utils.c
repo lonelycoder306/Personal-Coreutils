@@ -62,8 +62,7 @@ display_help(help_info* info)
     printf("Purpose: %s\n\n", info->purpose);
 
     const opt_group* const options = info->options;
-    if (options[0].option != NULL)
-        printf("Options:\n");
+    if (options[0].option != NULL) printf("Options:\n");
     for (int i = 0; options[i].option != NULL; i++)
     {
         if (options[i].alt == NULL)
@@ -77,11 +76,15 @@ display_help(help_info* info)
         printf("\n");
     }
 
+    if (info->option_details[0] != NULL) printf("Option details:\n");
     for (int i = 0; info->option_details[i] != NULL; i++)
         printf("%s\n", info->option_details[i]);
+    if (info->option_details[0] != NULL) printf("\n");
 
+    if (info->notes[0] != NULL) printf("Notes:\n");
     for (int i = 0; info->notes[i] != NULL; i++)
         printf("%s\n", info->notes[i]);
+    if (info->notes[0] != NULL) printf("\n");
 }
 
 static int
