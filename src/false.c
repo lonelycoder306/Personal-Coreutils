@@ -34,7 +34,7 @@ static void
 help_option()
 {
     help_info info = {
-        "false",
+        "false [OPTION]",
         "Exit with status code 1 (always).",
         false_options,
         false_option_details,

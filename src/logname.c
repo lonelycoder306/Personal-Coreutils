@@ -40,7 +40,7 @@ static void
 help_option()
 {
     help_info info = {
-        "logname [OPTION]...",
+        "logname [OPTION]",
         "Print the user's login name.",
         logname_options,
         logname_option_details,

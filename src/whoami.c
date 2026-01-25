@@ -42,7 +42,7 @@ static void
 help_option()
 {
     help_info info = {
-        "whoami [OPTION]...",
+        "whoami [OPTION]",
         "Print the user name associated with the current effective user ID.",
         whoami_options,
         whoami_option_details,
