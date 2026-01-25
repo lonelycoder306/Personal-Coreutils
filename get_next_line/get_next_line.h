@@ -1,6 +1,7 @@
 #ifndef GET_NEXT_LINE_H
 #define GET_NEXT_LINE_H
 
+#include <stdbool.h>
 #include <stdlib.h>
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -19,22 +20,22 @@
 	#error "BUFFER_SIZE too large."
 #endif
 
-typedef struct s_sbuf
-{
-	char	*chars;
+typedef struct sbuf {
+	char*	chars;
 	size_t	count;
 	size_t	capacity;
-}	t_sbuf;
+} sbuf;
 
 char	*get_next_line(int fd, size_t* length);
 
-#define FREE_CHARS		1
-#define NO_FREE_CHARS	0
-
 // Buffer functions.
 
-t_sbuf	*init_buf(void);
-void	append_buf(t_sbuf *buf, const char *str, size_t size);
-char	*free_buf(t_sbuf **buf, int free_chars, size_t* length);
+sbuf	*init_buf(void);
+void	append_buf(sbuf *buf, const char *str, size_t size);
+
+#define FREE_CHARS		true
+#define NO_FREE_CHARS	false
+
+char	*free_buf(sbuf **buf, bool free_chars, size_t* length);
 
 #endif

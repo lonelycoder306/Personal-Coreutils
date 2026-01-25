@@ -1,51 +1,39 @@
 #include "get_next_line.h"
+#include <stddef.h>
+#include <string.h>
 
-t_sbuf	*init_buf(void)
+sbuf *init_buf(void)
 {
-	t_sbuf	*buf;
+	sbuf* buf = malloc(sizeof(sbuf));
+	if (buf == NULL) return NULL;
 
-	if (BUFFER_SIZE == 0)
-		return (NULL);
-	buf = malloc(sizeof(t_sbuf));
-	if (buf == NULL)
-		return (NULL);
 	buf->chars = NULL;
 	buf->capacity = 0;
 	buf->count = 0;
-	return (buf);
+	return buf;
 }
 
-static void	realloc_buf(t_sbuf *buf, size_t new_size)
+static void realloc_buf(sbuf *buf, size_t new_size)
 {
-	char	*new_chars;
-	size_t	i;
+	char* new_chars = malloc(new_size * sizeof(char));
+	if (new_chars == NULL) return;
 
-	new_chars = malloc(new_size * sizeof(char));
-	if (!new_chars)
-		return ;
-	i = 0;
-	while (i < new_size)
-		new_chars[i++] = 0;
-	if (buf->chars)
+	memset(new_chars, '\0', new_size);
+	if (buf->chars != NULL)
 	{
-		i = 0;
-		while (i < buf->count)
-		{
-			new_chars[i] = buf->chars[i];
-			i++;
-		}
+		memcpy(new_chars, buf->chars, buf->count);
 		free(buf->chars);
 	}
+
 	buf->chars = new_chars;
 	buf->capacity = new_size;
 }
 
-void	append_buf(t_sbuf *buf, const char *str, size_t size)
+void append_buf(sbuf *buf, const char *str, size_t size)
 {
-	size_t	i;
-
 	if ((str == NULL) || (size <= 0))
-		return ;
+		return;
+
 	while (buf->capacity < buf->count + size + 1)
 	{
 		if (buf->capacity == 0)
@@ -53,7 +41,8 @@ void	append_buf(t_sbuf *buf, const char *str, size_t size)
 		else
 			realloc_buf(buf, buf->capacity * 2);
 	}
-	i = 0;
+
+	size_t i = 0;
 	while ((str[i] != '\0') && (i < size))
 	{
 		buf->chars[buf->count + i] = str[i];
@@ -62,14 +51,12 @@ void	append_buf(t_sbuf *buf, const char *str, size_t size)
 	buf->count += i;
 }
 
-char	*free_buf(t_sbuf **buf, int free_chars, size_t* length)
+char* free_buf(sbuf **buf, bool free_chars, size_t* length)
 {
-	char	*temp;
+	if (buf == NULL) return (NULL);
 
-	if (!buf)
-		return (NULL);
-	temp = NULL;
-	if (*buf)
+	char* temp = NULL;
+	if (*buf != NULL)
 	{
 		if (free_chars)
 		{
@@ -84,7 +71,8 @@ char	*free_buf(t_sbuf **buf, int free_chars, size_t* length)
 				*length = (*buf)->count;
 		}
 	}
+
 	free(*buf);
 	*buf = NULL;
-	return (temp);
+	return temp;
 }
