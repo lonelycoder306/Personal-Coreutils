@@ -13,7 +13,7 @@
     #define GETCWD getcwd
 #endif
 
-void
+NORETURN void
 end(const char* util_name, const char* src, const char* msg)
 {
     if (util_name != NULL)

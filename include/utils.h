@@ -14,6 +14,13 @@
 #define SET_BIT(f, bit)     ((f) |= (bit))
 #define RESET_BIT(f, bit)   ((f) &= ~(bit))
 
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 202000L)
+    #define NORETURN    [[noreturn]]
+#else
+    #include <stdnoreturn.h>
+    #define NORETURN    noreturn
+#endif
+
 // Internal issues.
 void    end(const char* util_name, const char* src,
     const char* msg);
