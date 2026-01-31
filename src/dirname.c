@@ -84,8 +84,8 @@ help_option()
 {
     help_info info = {
         "dirname [OPTION] [NAME]...",
-        "Output each NAME with its last non-slash component and trailing slashes removed;" \
-        "\n         if NAME contains no /'s, output '.' (meaning the current directory).",
+        "Output each NAME with its last non-slash component and trailing slashes removed;\n" \
+        "         if NAME contains no /'s, output '.' (meaning the current directory).",
         dirname_options,
         dirname_option_details,
         dirname_notes,
@@ -97,6 +97,8 @@ help_option()
 static char*
 substr(const char* s, size_t len)
 {
+    size_t slen = strlen(s);
+    if (slen < len) len = slen;
     char* ret = calloc(len + 1, sizeof(char));
     if (ret == NULL)
         end(UTIL_NAME, "substr", "Allocation failure.");
