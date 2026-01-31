@@ -1,5 +1,12 @@
+# Build files.
 *.o
 *.a
+
+# Personal notes.
+*.txt
+
+# Executables.
+basename
 cat
 dirname
 echo
@@ -10,4 +17,6 @@ pwd
 true
 whoami
 yes
+
+# Test directory.
 tests/
