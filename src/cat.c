@@ -90,16 +90,17 @@ set_flags(int argc, char* argv[], int* skip)
     else
     {
         cl_opt opts[LETTER_OPTS] = {
-            {'A', "--show-all", NONPRINT_BIT | SHOW_ENDS_BIT | TAB_BIT, SET},
-            {'b', "--number-nonblank", NO_BLANK_BIT, SET},
-            {'e', NULL, NONPRINT_BIT | SHOW_ENDS_BIT, SET},
-            {'E', "--show-ends", SHOW_ENDS_BIT, SET},
-            {'n', "--number", NUM_LINES_BIT, SET},
-            {'s', "--squeeze-blank", SQUEEZE_BIT, SET},
-            {'t', NULL, NONPRINT_BIT | TAB_BIT, SET},
-            {'T', "--show-tabs", TAB_BIT, SET},
-            {'u', NULL, 0, SET},
-            {'v', "--show-non-printing", NONPRINT_BIT, SET}
+            {'A', "--show-all", NONPRINT_BIT | SHOW_ENDS_BIT | TAB_BIT, SET,
+                false, NULL},
+            {'b', "--number-nonblank", NO_BLANK_BIT, SET, false, NULL},
+            {'e', NULL, NONPRINT_BIT | SHOW_ENDS_BIT, SET, false, NULL},
+            {'E', "--show-ends", SHOW_ENDS_BIT, SET, false, NULL},
+            {'n', "--number", NUM_LINES_BIT, SET, false, NULL},
+            {'s', "--squeeze-blank", SQUEEZE_BIT, SET, false, NULL},
+            {'t', NULL, NONPRINT_BIT | TAB_BIT, SET, false, NULL},
+            {'T', "--show-tabs", TAB_BIT, SET, false, NULL},
+            {'u', NULL, 0, SET, false, NULL},
+            {'v', "--show-non-printing", NONPRINT_BIT, SET, false, NULL}
         };
         f = set_bitflags(opts, argv, LETTER_OPTS, skip);
     }

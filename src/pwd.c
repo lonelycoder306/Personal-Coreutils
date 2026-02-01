@@ -72,8 +72,8 @@ set_flags(int argc, char* argv[], int* skip)
     else
     {
         cl_opt opts[LETTER_OPTS]  = {
-			{'L', "--logical", LOGICAL_BIT, SET},
-			{'P', "--physical", PHYSICAL_BIT, RESET}
+			{'L', "--logical", LOGICAL_BIT, SET, false, NULL},
+			{'P', "--physical", PHYSICAL_BIT, RESET, false, NULL}
         };
         f = (flag) set_bitflags(opts, argv, LETTER_OPTS, skip);
     }
