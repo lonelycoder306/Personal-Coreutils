@@ -94,7 +94,14 @@ in_str_array(char* str, cl_opt arr[], int count)
     {
         if (arr[i].alt == NULL)
             continue;
-        if (!strcmp(arr[i].alt, str))
+        size_t len = strlen(str);
+        char* pos = strchr(str, '=');
+        if (arr[i].has_value && (pos != NULL))
+        {
+            arr[i].value = pos + 1; // Skip the '=' sign.
+            len -= (pos - str);
+        }
+        if (!strncmp(arr[i].alt, str, len))
             return i;
     }
 

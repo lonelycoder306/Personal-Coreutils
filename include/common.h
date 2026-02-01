@@ -29,6 +29,8 @@ typedef struct cl_opt {
     const char* alt;
     u64         flag;
     bool        set;
+    bool        has_value;
+    const char* value; // For flags with an =[VALUE] after them.
 } cl_opt; // Command-line option struct.
 
 typedef struct opt_group {
