@@ -29,7 +29,7 @@ typedef u8 flag;
 #define VERSION_BIT     (1 << 6)
 #define NL_BIT          (1 << 5)
 #define INTER_BIT       (1 << 4)
-#define NO_INTER_BIT    (1 << 3)
+#define NO_INTER_BIT    INTER_BIT
 
 /* Option bit-masks. */
 
@@ -37,7 +37,6 @@ typedef u8 flag;
 #define VERSION(f)  ((f) & VERSION_BIT)
 #define NO_NL(f)    ((f) & NL_BIT)
 #define INTER(f)    ((f) & INTER_BIT)
-#define NO_INTER(f) ((f) & NO_INTER_BIT)
 
 /* Help option data. */
 
@@ -77,9 +76,9 @@ set_flags(int argc, char* argv[], int* skip)
     else
     {
         cl_opt opts[LETTER_OPTS]  = {
-            {'n', NULL, NL_BIT, SET},
-            {'e', NULL, INTER_BIT, SET},
-            {'E', NULL, NO_INTER_BIT, SET}
+            {'n', NULL, NL_BIT, SET, false, NULL},
+            {'e', NULL, INTER_BIT, SET, false, NULL},
+            {'E', NULL, NO_INTER_BIT, RESET, false, NULL}
         };
         f = (flag) set_bitflags(opts, argv, LETTER_OPTS, skip);
     }
@@ -241,7 +240,7 @@ main(int argc, char* argv[])
     for (int i = skip; argv[i] != NULL; i++)
     {
         char* arg = argv[i];
-        if (INTER(f) && !NO_INTER(f))
+        if (INTER(f))
         {
             char* temp = format_str(arg);
             printf("%s", temp);
