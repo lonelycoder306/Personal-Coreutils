@@ -51,7 +51,7 @@ static char	*read_full_line(int fd, sbuf **buf,
 	return new_line;
 }
 
-char	*get_next_line(int fd, size_t* length)
+char *get_next_line(int fd, size_t* length)
 {
 	sbuf* buf = init_buf();
 	if (buf == NULL) return NULL;
