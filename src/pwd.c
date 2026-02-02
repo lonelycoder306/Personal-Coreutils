@@ -121,16 +121,7 @@ main(int argc, char* argv[])
 {
 	flag f = set_flags(argc, argv, NULL);
 
-	if (HELP(f))
-	{
-		help_option();
-        exit(EXIT_SUCCESS);
-	}
-	else if (VERSION(f))
-	{
-		display_version(UTIL_NAME);
-		exit(EXIT_SUCCESS);
-	}
+	HELP_VERSION_OPTIONS();
 
 	char* path = get_logical_dir();
 	if (LOGICAL(f))

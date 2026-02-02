@@ -181,16 +181,7 @@ main(int argc, char* argv[])
     const char* values[VALUE_OPTS + 1] = {NULL};
     flag f = set_flags(argc, argv, &skip, values);
 
-    if (HELP(f))
-    {
-        help_option();
-        exit(EXIT_SUCCESS);
-    }
-    else if (VERSION(f))
-    {
-        display_version(UTIL_NAME);
-        exit(EXIT_SUCCESS);
-    }
+    HELP_VERSION_OPTIONS();
 
     const char* suffix = "";
     if (SUFFIX(f))

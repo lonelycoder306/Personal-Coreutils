@@ -14,6 +14,20 @@
 #define SET_BIT(f, bit)     ((f) |= (bit))
 #define RESET_BIT(f, bit)   ((f) &= ~(bit))
 
+#define HELP_VERSION_OPTIONS() \
+    do {                                \
+        if (HELP(f))                    \
+        {                               \
+            help_option();              \
+            exit(EXIT_SUCCESS);         \
+        }                               \
+        else if (VERSION(f))            \
+        {                               \
+            display_version(UTIL_NAME); \
+            exit(EXIT_SUCCESS);         \
+        }                               \
+    } while (false)
+
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 202000L)
     #define NORETURN    [[noreturn]]
 #else
