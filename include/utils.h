@@ -14,7 +14,7 @@
 #define SET_BIT(f, bit)     ((f) |= (bit))
 #define RESET_BIT(f, bit)   ((f) &= ~(bit))
 
-#define HELP_VERSION_OPTIONS() \
+#define HELP_VERSION_OPTIONS()          \
     do {                                \
         if (HELP(f))                    \
         {                               \
